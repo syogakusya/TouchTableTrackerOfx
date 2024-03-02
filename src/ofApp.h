@@ -4,7 +4,7 @@
 #include "ofxCv.h"
 #include "ofxGui.h"
 
-#include "ReactTableFollower.h"
+#include "touchTableTracker.h"
 
 class ofApp : public ofBaseApp {
 
@@ -12,6 +12,7 @@ public:
 	void setup();
 	void update();
 	void draw();
+	void exit();
 
 	void keyPressed(int key);
 	void keyReleased(int key);
@@ -25,19 +26,14 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
-	ofVideoGrabber cam;//カメラ映像取得
-	cv::Mat img;//ガンマ補正用Mat
-	ofxCv::ContourFinder contourFinder;
-	ofColor targetColor;
-	ofxCv::RectTrackerFollower<ReactTableFollower> tracker;
-
+	ofVideoGrabber cam;
+	std::unique_ptr<TouchTableThread> touchTableTracker_;
+	ofColor targetColor_;
 
 	//Gui部分パラメーター
 	ofxPanel gui;
-	ofParameter<float> threshold;
-	ofParameter<bool> trackHs;
-	ofParameter<bool> holes;
-	ofParameter<float> minAreaRadius;
-	ofParameter<float> maxAreaRadius;
-	ofParameter<float> gamma;
+	ofParameter<float> threshold_;
+	ofParameter<float> minAreaRadius_;
+	ofParameter<float> maxAreaRadius_;
+	ofParameter<float> gamma_;
 };
