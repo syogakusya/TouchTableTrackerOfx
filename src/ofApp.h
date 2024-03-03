@@ -36,4 +36,7 @@ public:
 	ofParameter<float> minAreaRadius_;
 	ofParameter<float> maxAreaRadius_;
 	ofParameter<float> gamma_;
+	ofParameter<bool> isCalibMode_;
+
+	bool drawGui = false;
 };

@@ -27,12 +27,13 @@ public:
 	TouchTableThread() {
 		contourFinder_ = std::make_unique<ofxCv::ContourFinder>();
 		tracker_ = std::make_unique <ofxCv::RectTrackerFollower<TouchTableTracker>>();
+		reset_Circle();
 	};
 
 	~TouchTableThread(){}
 
-	void getCamera(ofVideoGrabber* cam);
-	void adjustGamma(cv::Mat& img, float gamma = 0.5);
+	void setCamera(ofVideoGrabber* cam);
+	void adjustGamma(cv::Mat& img, float gamma = 1.0);
 	//~TouchTableThread();
 	void draw();
 	void setParam(
@@ -59,4 +60,25 @@ private:
 
 
 	void threadedFunction();
+
+//--Circle Drawing for Perspective--------------------------------------------
+public:
+	std::vector<ofVec2f>pts_src;
+
+	void reset_Circle();
+	void setCalibMode(bool calibMode);
+	bool getCalibMode();
+	void moveClosestPoint(int x, int y);
+	void pickClosestPoint(int x, int y);
+	void setCalib();
+
+private:
+	bool isCalibMode;
+	int pickedCircle;
+	ofVec2f pickOffset;
+	cv::Mat perspectiveMat;
+	cv::Mat resultImg;
+
+	void setPerspective(std::vector<ofVec2f> circles);
+	void drawSrcCircle();
 };

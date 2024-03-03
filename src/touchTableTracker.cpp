@@ -56,14 +56,14 @@ void TouchTableThread ::adjustGamma(cv::Mat& img, float gamma) {
 	cv::LUT(img, lookUpTable, img);
 }
 
-void TouchTableThread::getCamera(ofVideoGrabber* cam) {
+void TouchTableThread::setCamera(ofVideoGrabber* cam) {
 	camera = cam;
 }
 
 
 void TouchTableThread::draw() {
 	lock();
-	ofxCv::drawMat(gray, 0, 0);
+	ofxCv::drawMat(resultImg, 0, 0);
 	
 	ofSetColor(255);//描画色を白に設定
 	ofSetLineWidth(2);//描画する線の太さを設定
@@ -79,6 +79,8 @@ void TouchTableThread::draw() {
 	for (int i = 0; i < followers.size(); i++) {
 		followers[i].draw();
 	}
+
+	drawSrcCircle();
 	unlock();
 }
 
@@ -109,26 +111,118 @@ ofColor TouchTableThread::getTargetColor(int x, int y) {
 
 //--private method-------------------------------------------------
 void TouchTableThread::threadedFunction() {
+	contourFinder_->setAutoThreshold(true);
 	while (isThreadRunning()) {
 		if (camera != nullptr) {
 			if (camera->isFrameNew()) {
 				lock();
 				img = ofxCv::toCv(*camera);
-				gray = img.clone();
+				cv::cvtColor(img.clone(), gray, cv::COLOR_RGB2GRAY);
+				cv::warpPerspective(gray, gray, perspectiveMat, gray.size(), cv::INTER_NEAREST);
+				//cv::resize(gray,gray,cv::Size(640/2, 480/2), 0 ,0 ,0);
 				adjustGamma(gray, gamma);
-				//グレイスケール化
-				contourFinder_->setTargetColor(targetColor, false ? ofxCv::TRACK_COLOR_HS : ofxCv::TRACK_COLOR_RGB);
-				////穴検知
-				//contourFinder_->setFindHoles(holes);
 
-				
+				resultImg = (isCalibMode) ? img : gray.clone();
 				//輪郭検知開始
 				contourFinder_->findContours(gray);
-
 				tracker_->track(contourFinder_->getBoundingRects());
 				unlock();
 			}
 			Sleep(2);
 		}
 	}
+}
+
+//--Circle Drawing for Perspective
+
+void TouchTableThread::reset_Circle() {
+	pts_src.clear();
+	pts_src.push_back(ofVec2f(0, 0));
+	pts_src.push_back(ofVec2f(640 - 1, 0));
+	pts_src.push_back(ofVec2f(640 - 1, 480 - 1));
+	pts_src.push_back(ofVec2f(0, 480 - 1));
+	setPerspective(pts_src);
+}
+
+void TouchTableThread::setCalibMode(bool calibMode) {
+	if (isCalibMode != calibMode) {
+		lock();
+		isCalibMode = calibMode;
+		pickedCircle = -1;
+		unlock();
+	}
+}
+
+bool TouchTableThread::getCalibMode() {
+	return isCalibMode;
+}
+
+void TouchTableThread::drawSrcCircle() {
+	if (isCalibMode) {
+		ofNoFill();
+		ofSetColor(255, 0, 0);
+		ofDrawCircle(pts_src[0], 10);
+		ofDrawBitmapString("0", pts_src[0]);
+		ofDrawLine(pts_src[0], pts_src[1]);
+
+		ofSetColor(0, 255, 0);
+		ofDrawCircle(pts_src[1], 10);
+		ofDrawBitmapString("1", pts_src[1]);
+		ofDrawLine(pts_src[1], pts_src[2]);
+
+		ofSetColor(0, 0, 255);
+		ofDrawCircle(pts_src[2], 10);
+		ofDrawBitmapString("2", pts_src[2]);
+		ofDrawLine(pts_src[2], pts_src[3]);
+
+		ofSetColor(255, 255, 0);
+		ofDrawCircle(pts_src[3], 10);
+		ofDrawBitmapString("3", pts_src[3]);
+		ofDrawLine(pts_src[3], pts_src[0]);
+		ofFill();
+	}
+}
+
+void TouchTableThread::moveClosestPoint(int x, int y) {
+	if (pickedCircle > -1) {
+		pts_src[pickedCircle] = ofVec2f(x, y) + pickOffset;
+	}
+}
+
+void TouchTableThread::pickClosestPoint(int x, int y) {
+	float cls = INFINITY;
+	for (size_t i = 0; i < 4; i++) {
+		ofVec2f v = pts_src[i] - ofVec2f(x, y);
+		float d = v.length();
+		if (cls > d) {
+			pickedCircle = i;
+			cls = d;
+			pickOffset = v;
+		}
+	}
+}
+
+void TouchTableThread::setPerspective(std::vector<ofVec2f> circles) {
+	if (circles.size() != 4) return;
+
+	pts_src.clear();
+	std::vector<cv::Point2f> src;
+	for (size_t i = 0; i < 4; i++) {
+		pts_src.push_back(circles[i]);
+		src.push_back(cv::Point2f(circles[i].x, circles[i].y));
+	}
+
+	std::vector<cv::Point2f> dst;
+	dst.push_back(cv::Point2f(0, 0));
+	dst.push_back(cv::Point2f(640 - 1, 0));
+	dst.push_back(cv::Point2f(640 - 1, 480 - 1));
+	dst.push_back(cv::Point2f(0, 480 - 1));
+
+	lock();
+	perspectiveMat = cv::getPerspectiveTransform(src, dst);
+	unlock();
+}
+
+void TouchTableThread::setCalib() {
+	setPerspective(pts_src);
 }

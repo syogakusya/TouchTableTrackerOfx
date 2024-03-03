@@ -12,16 +12,19 @@ void ofApp::setup(){
 	
 
 	gui.setup();
+	//gui.setPosition(480, 20);
 	gui.add(minAreaRadius_.set("MinAreaRadius", 10.0, 0, 50.0));
 	gui.add(maxAreaRadius_.set("MaxAreaRadius", 100, 0, 500));
 	gui.add(threshold_.set("Threshold", 128, 0, 255));
 	gui.add(gamma_.set("Gamma", 0.5, 0, 50));
+	gui.add(isCalibMode_.set("Calibration", false));
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	cam.update();
-	touchTableTracker_->getCamera(&cam);
+	touchTableTracker_->setCalibMode(isCalibMode_);
+	touchTableTracker_->setCamera(&cam);
 	touchTableTracker_->setParam(minAreaRadius_, maxAreaRadius_, threshold_, gamma_);
 }
 
@@ -36,7 +39,8 @@ void ofApp::draw() {
 	ofDrawBitmapString(msg, 500, 20);
 
 	// draw GUI
-	gui.draw();
+	if(drawGui)
+		gui.draw();
 
 	ofTranslate(220, 10);
 	ofFill();
@@ -53,7 +57,9 @@ void ofApp::exit() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+	if (key == 'g') {
+		drawGui = !drawGui;
+	}
 }
 
 //--------------------------------------------------------------
@@ -68,17 +74,26 @@ void ofApp::mouseMoved(int x, int y ){
 
 //--------------------------------------------------------------
 void ofApp::mouseDragged(int x, int y, int button){
-
+	if (touchTableTracker_->getCalibMode()) {
+		touchTableTracker_->moveClosestPoint(x, y);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-	targetColor_ = touchTableTracker_->getTargetColor(x, y);
+	if (touchTableTracker_->getCalibMode()) {
+		touchTableTracker_->pickClosestPoint(x, y);
+	}
+	else {
+		targetColor_ = touchTableTracker_->getTargetColor(x, y);
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
-
+	if (touchTableTracker_->getCalibMode()) {
+		touchTableTracker_->setCalib();
+	}
 }
 
 //--------------------------------------------------------------
