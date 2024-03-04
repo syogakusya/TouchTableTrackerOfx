@@ -4,6 +4,9 @@
 #include "ofxCv.h"
 #include "ofxGui.h"
 
+#include "TUIO/TuioServer.h"
+#include "osc/OscTypes.h"
+
 #include "touchTableTracker.h"
 
 class ofApp : public ofBaseApp {
@@ -31,7 +34,8 @@ public:
 
 	ofVideoGrabber cam;
 	std::unique_ptr<TouchTableThread> touchTableTracker_;
-	ofColor targetColor_;
+
+	ofImage cameraImg;
 
 	//Gui部分パラメーター
 	ofxPanel gui;

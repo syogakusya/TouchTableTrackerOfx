@@ -1,5 +1,4 @@
 #pragma once
-
 #include "ofMain.h"
 #include "ofxCv.h"
 
@@ -34,14 +33,13 @@ public:
 	void getWindowSize(int w_, int h_);
 	void setCamera(ofVideoGrabber* cam);
 	void adjustGamma(cv::Mat& img, float gamma = 1.0);
-	//~TouchTableThread();
 	void draw();
 	void setParam(
 		float minAR, 
 		float maxAR, 
 		float th, 
 		float gm);
-	ofColor getTargetColor(int x, int y);
+	void getCameraImage(ofImage& image);
 	
 
 private:
@@ -58,7 +56,6 @@ private:
 
 	int w, h;
 
-	ofColor targetColor;
 
 
 	void threadedFunction();
@@ -83,4 +80,12 @@ private:
 
 	void setPerspective(std::vector<ofVec2f> circles);
 	void drawSrcCircle();
+
+//--TUIO-----------------------------------------------------------------------
+//public:
+//	void sendTUIOData();
+//
+//private:
+//	std::unique_ptr<TUIO::TuioServer> tuioServer_;
+//	std::map< int, TUIO::TuioCursor* > cursors_;
 };

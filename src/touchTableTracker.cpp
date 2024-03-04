@@ -42,6 +42,11 @@ void TouchTableTracker ::draw() {
 }
 
 //--public method--------------------------------------------------------------
+void TouchTableThread::getCameraImage(ofImage& image) {
+	lock();
+	ofxCv::toOf(resultImg, image);
+	unlock();
+}
 void TouchTableThread ::adjustGamma(cv::Mat& img, float gamma) {
 	/*cv::Mat lookUpTable(1, 256, CV_8U);
 	unsigned char* p = lookUpTable.ptr();
@@ -68,17 +73,9 @@ void TouchTableThread::setCamera(ofVideoGrabber* cam) {
 
 void TouchTableThread::draw() {
 	lock();
-	ofxCv::drawMat(resultImg, 0, 0);
-	
 	ofSetColor(255);//描画色を白に設定
 	ofSetLineWidth(2);//描画する線の太さを設定
 	contourFinder_->draw();//輪郭描画
-
-	//ofNoFill();//描画をアウトラインのみに設定
-	//int n = contourFinder.size();//検知した数を確保
-	//for (int i = 0; i < n; i++) {
-
-	//}
 
 	vector<TouchTableTracker>& followers = tracker_->getFollowers();
 	for (int i = 0; i < followers.size(); i++) {
@@ -107,11 +104,6 @@ void TouchTableThread::setParam(
 	tracker_->setPersistence(15);
 	tracker_->setMaximumDistance(32);
 	unlock();
-}
-
-ofColor TouchTableThread::getTargetColor(int x, int y) {
-	targetColor = camera->getPixels().getColor(x, y);
-	return targetColor;
 }
 
 //--private method-------------------------------------------------
@@ -164,6 +156,7 @@ bool TouchTableThread::getCalibMode() {
 
 void TouchTableThread::drawSrcCircle() {
 	if (isCalibMode) {
+		ofPushStyle();
 		ofNoFill();
 		ofSetColor(255, 0, 0);
 		ofDrawCircle(pts_src[0], 10);
@@ -185,6 +178,7 @@ void TouchTableThread::drawSrcCircle() {
 		ofDrawBitmapString("3", pts_src[3]);
 		ofDrawLine(pts_src[3], pts_src[0]);
 		ofFill();
+		ofPopStyle();
 	}
 }
 
@@ -231,3 +225,4 @@ void TouchTableThread::setPerspective(std::vector<ofVec2f> circles) {
 void TouchTableThread::setCalib() {
 	setPerspective(pts_src);
 }
+
