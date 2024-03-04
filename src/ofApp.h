@@ -26,6 +26,9 @@ public:
 	void dragEvent(ofDragInfo dragInfo);
 	void gotMessage(ofMessage msg);
 
+	void getWindowSize(int w_, int h_);
+	int w, h;
+
 	ofVideoGrabber cam;
 	std::unique_ptr<TouchTableThread> touchTableTracker_;
 	ofColor targetColor_;

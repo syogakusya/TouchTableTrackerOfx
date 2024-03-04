@@ -56,6 +56,11 @@ void TouchTableThread ::adjustGamma(cv::Mat& img, float gamma) {
 	cv::LUT(img, lookUpTable, img);
 }
 
+void TouchTableThread::getWindowSize(int w_, int h_) {
+	w = w_;
+	h = h_;
+}
+
 void TouchTableThread::setCamera(ofVideoGrabber* cam) {
 	camera = cam;
 }
@@ -138,9 +143,9 @@ void TouchTableThread::threadedFunction() {
 void TouchTableThread::reset_Circle() {
 	pts_src.clear();
 	pts_src.push_back(ofVec2f(0, 0));
-	pts_src.push_back(ofVec2f(640 - 1, 0));
-	pts_src.push_back(ofVec2f(640 - 1, 480 - 1));
-	pts_src.push_back(ofVec2f(0, 480 - 1));
+	pts_src.push_back(ofVec2f(w - 1, 0));
+	pts_src.push_back(ofVec2f(w - 1, h - 1));
+	pts_src.push_back(ofVec2f(0, h - 1));
 	setPerspective(pts_src);
 }
 
@@ -214,9 +219,9 @@ void TouchTableThread::setPerspective(std::vector<ofVec2f> circles) {
 
 	std::vector<cv::Point2f> dst;
 	dst.push_back(cv::Point2f(0, 0));
-	dst.push_back(cv::Point2f(640 - 1, 0));
-	dst.push_back(cv::Point2f(640 - 1, 480 - 1));
-	dst.push_back(cv::Point2f(0, 480 - 1));
+	dst.push_back(cv::Point2f(w - 1, 0));
+	dst.push_back(cv::Point2f(w - 1, h - 1));
+	dst.push_back(cv::Point2f(0, h - 1));
 
 	lock();
 	perspectiveMat = cv::getPerspectiveTransform(src, dst);

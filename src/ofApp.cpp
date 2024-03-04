@@ -1,22 +1,29 @@
 #include "ofApp.h"
 
+void ofApp::getWindowSize(int w_, int h_) {
+	w = w_;
+	h = h_;
+}
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetVerticalSync(true);
 	ofBackground(0);
 
-	cam.setup(640, 480);
+	cam.setup(w, h);
 
 	touchTableTracker_ = std::make_unique<TouchTableThread>();
+	touchTableTracker_->getWindowSize(w, h);
+	touchTableTracker_->reset_Circle();
 	touchTableTracker_->startThread(true);
 	
 
 	gui.setup();
 	//gui.setPosition(480, 20);
-	gui.add(minAreaRadius_.set("MinAreaRadius", 10.0, 0, 50.0));
-	gui.add(maxAreaRadius_.set("MaxAreaRadius", 100, 0, 500));
+	gui.add(minAreaRadius_.set("MinAreaRadius", 30.0, 0, 100.0));
+	gui.add(maxAreaRadius_.set("MaxAreaRadius", 400, 0, 1000));
 	gui.add(threshold_.set("Threshold", 128, 0, 255));
-	gui.add(gamma_.set("Gamma", 0.5, 0, 50));
+	gui.add(gamma_.set("Gamma", 0.5, 0, 40));
 	gui.add(isCalibMode_.set("Calibration", false));
 }
 
@@ -39,15 +46,15 @@ void ofApp::draw() {
 	ofDrawBitmapString(msg, 500, 20);
 
 	// draw GUI
-	if(drawGui)
+	if (drawGui) {
 		gui.draw();
-
-	ofTranslate(220, 10);
-	ofFill();
-	ofSetColor(0);
-	ofDrawRectangle(-3, -3, 32 + 6, 32 + 6);
-	ofSetColor(targetColor_);
-	ofDrawRectangle(0, 0, 32, 32);
+		ofTranslate(220, 10);
+		ofFill();
+		ofSetColor(0);
+		ofDrawRectangle(-3, -3, 32 + 6, 32 + 6);
+		ofSetColor(targetColor_);
+		ofDrawRectangle(0, 0, 32, 32);
+	}
 }
 
 //--------------------------------------------------------------
@@ -84,7 +91,7 @@ void ofApp::mousePressed(int x, int y, int button){
 	if (touchTableTracker_->getCalibMode()) {
 		touchTableTracker_->pickClosestPoint(x, y);
 	}
-	else {
+	else if(drawGui){
 		targetColor_ = touchTableTracker_->getTargetColor(x, y);
 	}
 }

@@ -27,11 +27,11 @@ public:
 	TouchTableThread() {
 		contourFinder_ = std::make_unique<ofxCv::ContourFinder>();
 		tracker_ = std::make_unique <ofxCv::RectTrackerFollower<TouchTableTracker>>();
-		reset_Circle();
 	};
 
 	~TouchTableThread(){}
 
+	void getWindowSize(int w_, int h_);
 	void setCamera(ofVideoGrabber* cam);
 	void adjustGamma(cv::Mat& img, float gamma = 1.0);
 	//~TouchTableThread();
@@ -55,6 +55,8 @@ private:
 	float maxAreaRadius;
 	float gamma;
 	float threshold;
+
+	int w, h;
 
 	ofColor targetColor;
 
