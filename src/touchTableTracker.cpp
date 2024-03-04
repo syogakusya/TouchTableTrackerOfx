@@ -1,7 +1,5 @@
 #include "touchTableTracker.h"
 
-const float dyingTime = 1;
-
 void TouchTableTracker::setup(const cv::Rect& track) {
 	color.setHsb(ofRandom(0, 255), 255, 255);
 	cur = ofxCv::toOf(track).getCenter();
@@ -11,7 +9,7 @@ void TouchTableTracker::setup(const cv::Rect& track) {
 void TouchTableTracker::update(const cv::Rect& track) {
 	cur = ofxCv::toOf(track).getCenter();
 	smooth.interpolate(cur, .5);
-	all.addVertex(smooth);
+	trail.addVertex(smooth);
 }
 
 void TouchTableTracker::kill() {
@@ -35,7 +33,7 @@ void TouchTableTracker ::draw() {
 	ofNoFill();
 	ofDrawCircle(cur, size);
 	ofSetColor(color);
-	all.draw();
+	trail.draw();
 	ofSetColor(255);
 	ofDrawBitmapString(ofToString(label), cur);
 	ofPopStyle();
@@ -117,6 +115,7 @@ void TouchTableThread::threadedFunction() {
 				cv::cvtColor(img.clone(), gray, cv::COLOR_RGB2GRAY);
 				cv::warpPerspective(gray, gray, perspectiveMat, gray.size(), cv::INTER_NEAREST);
 				//cv::resize(gray,gray,cv::Size(640/2, 480/2), 0 ,0 ,0);
+				cv::GaussianBlur(gray, gray, cv::Size(9, 9), 0, 0);
 				adjustGamma(gray, gamma);
 
 				resultImg = (isCalibMode) ? img : gray.clone();
@@ -226,3 +225,36 @@ void TouchTableThread::setCalib() {
 	setPerspective(pts_src);
 }
 
+//--TUIO
+void TouchTableThread::sendTUIOData() {
+	tuioServer_->initFrame(TUIO::TuioTime::getSessionTime());
+	for each (auto follower in  tracker_->getFollowers())
+	{
+		auto label = follower.getLabel();
+		auto center = follower.smooth;
+
+		center.x /= (640 / 2);
+		center.y /= (480 / 2);
+		switch (follower.state_)
+		{
+		case FingerFollower::BORN:
+			cursors_[label] = tuioServer_->addTuioCursor(center.x, center.y);
+			break;
+
+		case FingerFollower::ALIVE:
+			tuioServer_->updateTuioCursor(cursors_[label], center.x, center.y);
+			break;
+
+		case FingerFollower::DEAD:
+			tuioServer_->removeTuioCursor(cursors_[label]);
+			follower.terminate();
+			cursors_.erase(label);
+			break;
+
+		default:
+			break;
+		}
+	}
+
+	tuioServer_->commitFrame();
+}

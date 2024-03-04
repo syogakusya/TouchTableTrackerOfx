@@ -2,8 +2,8 @@
 #include "ofApp.h"
 
 //window size
-const int w = 640;
-const int h = 480;
+const int w = 800;
+const int h = 450;
 
 int main( ){
 	ofSetupOpenGL(w, h, OF_WINDOW);

@@ -4,9 +4,6 @@
 #include "ofxCv.h"
 #include "ofxGui.h"
 
-#include "TUIO/TuioServer.h"
-#include "osc/OscTypes.h"
-
 #include "touchTableTracker.h"
 
 class ofApp : public ofBaseApp {

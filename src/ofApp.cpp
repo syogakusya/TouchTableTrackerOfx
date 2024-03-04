@@ -20,8 +20,8 @@ void ofApp::setup(){
 
 	gui.setup();
 	//gui.setPosition(480, 20);
-	gui.add(minAreaRadius_.set("MinAreaRadius", 30.0, 0, 100.0));
-	gui.add(maxAreaRadius_.set("MaxAreaRadius", 400, 0, 1000));
+	gui.add(minAreaRadius_.set("MinAreaRadius", 10.0, 0, 30.0));
+	gui.add(maxAreaRadius_.set("MaxAreaRadius", 100, 0, 500));
 	gui.add(threshold_.set("Threshold", 128, 0, 255));
 	gui.add(gamma_.set("Gamma", 0.5, 0.1, 40));
 	gui.add(isCalibMode_.set("Calibration", false));

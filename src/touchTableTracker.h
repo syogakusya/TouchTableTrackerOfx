@@ -1,13 +1,14 @@
 #pragma once
 #include "ofMain.h"
 #include "ofxCv.h"
+#include "TUIO/TuioServer.h"
 
 class TouchTableTracker : public ofxCv::RectFollower {
 protected:
 		ofColor color;
 		ofVec3f cur, smooth;
-		float startedDying;
-		ofPolyline all;
+		float startedDying, startedNasent, dyingTime, nasenttime;
+		ofPolyline trail;
 
 public:
 	TouchTableTracker()
@@ -24,6 +25,10 @@ class TouchTableThread : public ofThread
 {
 public: 
 	TouchTableThread() {
+		tuioServer_ = std::make_unique<TUIO::TuioServer>();
+		tuioServer_->setSourceName("TouchTableTracker");
+		tuioServer_->enableObjectProfile(false);
+		tuioServer_->enableBlobProfile(false);
 		contourFinder_ = std::make_unique<ofxCv::ContourFinder>();
 		tracker_ = std::make_unique <ofxCv::RectTrackerFollower<TouchTableTracker>>();
 	};
@@ -82,10 +87,10 @@ private:
 	void drawSrcCircle();
 
 //--TUIO-----------------------------------------------------------------------
-//public:
-//	void sendTUIOData();
-//
-//private:
-//	std::unique_ptr<TUIO::TuioServer> tuioServer_;
-//	std::map< int, TUIO::TuioCursor* > cursors_;
+public:
+	void sendTUIOData();
+
+private:
+	std::unique_ptr<TUIO::TuioServer> tuioServer_;
+	std::map< int, TUIO::TuioCursor* > cursors_;
 };
