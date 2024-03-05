@@ -6,18 +6,24 @@
 class TouchTableTracker : public ofxCv::RectFollower {
 protected:
 		ofColor color;
-		ofVec3f cur, smooth;
-		float startedDying, startedNasent, dyingTime, nasenttime;
+		float startedDying, startedNasent, dyingTime, nasentTime;
 		ofPolyline trail;
 
 public:
-	TouchTableTracker()
-		:startedDying(0) {
-	}
+	ofVec3f cur, smooth;
+	enum { NASENT, BORN, ALIVE, DEAD} state;
+
+	TouchTableTracker():
+		startedDying(0),
+		startedNasent(0),
+		dyingTime(1),
+		nasentTime(0.5){}
+
 	void setup(const cv::Rect& track);
 	void update(const cv::Rect& track);
 	void kill();
 	void draw();
+	void terminate();
 
 };
 

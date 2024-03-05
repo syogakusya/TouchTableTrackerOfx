@@ -1,42 +1,101 @@
 #include "touchTableTracker.h"
 
 void TouchTableTracker::setup(const cv::Rect& track) {
+	startedNasent = ofGetElapsedTimef();
 	color.setHsb(ofRandom(0, 255), 255, 255);
 	cur = ofxCv::toOf(track).getCenter();
 	smooth = cur;
+	state = NASENT;
+	trail.clear();
 }
 
-void TouchTableTracker::update(const cv::Rect& track) {
-	cur = ofxCv::toOf(track).getCenter();
-	smooth.interpolate(cur, .5);
-	trail.addVertex(smooth);
+void TouchTableTracker::update(const cv::Rect& track) { 
+	if (state == BORN) {
+		state = ALIVE;
+	}
+
+	if (state == ALIVE) {
+		startedDying = 0;
+
+		cur = ofxCv::toOf(track).getCenter();
+		smooth.interpolate(cur, .5);
+		trail.addVertex(smooth);
+		if (trail.size() > 30) {
+			trail.removeVertex(0);
+		}
+	}
+	else if (state == NASENT) {
+		float curTime = ofGetElapsedTimef();
+		if (curTime - startedNasent > nasentTime) {
+			color.setHsb(ofRandom(0, 255), 255, 255);
+			state = BORN;
+		}
+	}
 }
 
 void TouchTableTracker::kill() {
 	float curTime = ofGetElapsedTimef();
-	if (startedDying == 0) {
-		startedDying = curTime;
+	if (state == ALIVE) {
+		if (startedDying == 0) {
+			startedDying = curTime;
+		}
+		else if (curTime - startedDying > dyingTime) {
+			state = DEAD;
+		}
 	}
-	else if (curTime - startedDying > dyingTime) {
-		dead = true;
+	else {
+		state = DEAD;
 	}
 }
 
 void TouchTableTracker ::draw() {
+	if (state != ALIVE) return;
+
+	float curTime = ofGetElapsedTimef();
+	float age = curTime - nasentTime;
+
 	ofPushStyle();
 	float size = 16;
-	ofSetColor(255);
+	ofSetColor(0, 0, 255);
 	if (startedDying) {
 		ofSetColor(ofColor::red);
 		size = ofMap(ofGetElapsedTimef() - startedDying, 0, dyingTime, size, 0, true);
 	}
 	ofNoFill();
+	unsigned int label = this->getLabel();
+	ofSeedRandom(label << 24);
+	ofSetColor(0, 0, 255);
+
 	ofDrawCircle(cur, size);
-	ofSetColor(color);
-	trail.draw();
-	ofSetColor(255);
 	ofDrawBitmapString(ofToString(label), cur);
+
+	ofSetColor(0,255,255);
+	switch (state)
+	{
+	case TouchTableTracker::NASENT:
+		ofDrawBitmapString("NASENT", cur.x, cur.y - 10);
+		break;
+	case TouchTableTracker::BORN:
+		ofDrawBitmapString("BORN", cur.x, cur.y - 10);
+		break;
+	case TouchTableTracker::ALIVE:
+		ofDrawBitmapString("ALIVE", cur.x, cur.y - 10);
+		break;
+	case TouchTableTracker::DEAD:
+		ofDrawBitmapString("DEAD", cur.x, cur.y - 10);
+		break;
+	default:
+		break;
+	}
+	trail.draw();
+	
 	ofPopStyle();
+}
+
+void TouchTableTracker::terminate() {
+	dead = true;
+	state = DEAD;
+	trail.clear();
 }
 
 //--public method--------------------------------------------------------------
@@ -233,19 +292,19 @@ void TouchTableThread::sendTUIOData() {
 		auto label = follower.getLabel();
 		auto center = follower.smooth;
 
-		center.x /= (640 / 2);
-		center.y /= (480 / 2);
-		switch (follower.state_)
+		center.x /= (w / 2);
+		center.y /= (h / 2);
+		switch (follower.state)
 		{
-		case FingerFollower::BORN:
+		case TouchTableTracker::BORN:
 			cursors_[label] = tuioServer_->addTuioCursor(center.x, center.y);
 			break;
 
-		case FingerFollower::ALIVE:
+		case TouchTableTracker::ALIVE:
 			tuioServer_->updateTuioCursor(cursors_[label], center.x, center.y);
 			break;
 
-		case FingerFollower::DEAD:
+		case TouchTableTracker::DEAD:
 			tuioServer_->removeTuioCursor(cursors_[label]);
 			follower.terminate();
 			cursors_.erase(label);
