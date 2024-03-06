@@ -510,6 +510,9 @@
     <Filter Include="src\ip">
       <UniqueIdentifier>{fe61837d-6524-42e4-914e-9c45ec4eca12}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\nlohmann">
+      <UniqueIdentifier>{fbcb4196-9050-4854-9fb3-a891f93006dd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h">
@@ -2461,6 +2464,141 @@
     </ClInclude>
     <ClInclude Include="..\..\..\..\TUIO11_CPP-master\oscpack\ip\UdpSocket.h">
       <Filter>src\ip</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\adl_serializer.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\byte_container_with_subtype.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\abi_macros.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\conversions\from_json.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\conversions\to_chars.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\conversions\to_json.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\exceptions.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\hash.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\binary_reader.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\input_adapters.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\json_sax.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\lexer.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\parser.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\input\position_t.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\internal_iterator.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\iteration_proxy.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\iterator_traits.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\iter_impl.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\json_reverse_iterator.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\iterators\primitive_iterator.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\json_custom_base_class.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\json_pointer.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\json_ref.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\macro_scope.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\macro_unscope.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\call_std\begin.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\call_std\end.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\cpp_future.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\detected.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\identity_tag.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\is_sax.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\std_fs.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\type_traits.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\meta\void_t.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\output\binary_writer.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\output\output_adapters.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\output\serializer.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\string_concat.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\string_escape.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\detail\value_t.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\json.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\json_fwd.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\ordered_map.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\thirdparty\hedley\hedley.hpp">
+      <Filter>src\nlohmann</Filter>
+    </ClInclude>
+    <ClInclude Include="src\nlohmann\thirdparty\hedley\hedley_undef.hpp">
+      <Filter>src\nlohmann</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

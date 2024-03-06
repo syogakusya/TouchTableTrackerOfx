@@ -20,7 +20,7 @@ void TouchTableTracker::update(const cv::Rect& track) {
 		cur = ofxCv::toOf(track).getCenter();
 		smooth.interpolate(cur, .5);
 		trail.addVertex(smooth);
-		if (trail.size() > 30) {
+		if (trail.size() > 20) {
 			trail.removeVertex(0);
 		}
 	}
@@ -174,13 +174,14 @@ void TouchTableThread::threadedFunction() {
 				cv::cvtColor(img.clone(), gray, cv::COLOR_RGB2GRAY);
 				cv::warpPerspective(gray, gray, perspectiveMat, gray.size(), cv::INTER_NEAREST);
 				//cv::resize(gray,gray,cv::Size(640/2, 480/2), 0 ,0 ,0);
-				cv::GaussianBlur(gray, gray, cv::Size(9, 9), 0, 0);
+				cv::GaussianBlur(gray, gray, cv::Size(11, 11), 0, 0);
 				adjustGamma(gray, gamma);
 
 				resultImg = (isCalibMode) ? img : gray.clone();
 				//—ÖŠsŒŸ’mŠJŽn
 				contourFinder_->findContours(gray);
 				tracker_->track(contourFinder_->getBoundingRects());
+				sendTUIOData();
 				unlock();
 			}
 			Sleep(2);
@@ -292,6 +293,8 @@ void TouchTableThread::sendTUIOData() {
 		auto label = follower.getLabel();
 		auto center = follower.smooth;
 
+		center.x -= (w / 2);
+		center.y -= (h / 2);
 		center.x /= (w / 2);
 		center.y /= (h / 2);
 		switch (follower.state)

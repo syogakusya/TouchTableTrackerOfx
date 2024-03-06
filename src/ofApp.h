@@ -4,6 +4,7 @@
 #include "ofxCv.h"
 #include "ofxGui.h"
 
+#include "nlohmann/json.hpp"
 #include "touchTableTracker.h"
 
 class ofApp : public ofBaseApp {
@@ -43,4 +44,7 @@ public:
 	ofParameter<bool> isCalibMode_;
 
 	bool drawGui = false;
+
+	void saveParam();
+	void loadParam();
 };

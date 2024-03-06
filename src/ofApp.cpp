@@ -12,12 +12,6 @@ void ofApp::setup(){
 
 	cam.setup(w, h);
 
-	touchTableTracker_ = std::make_unique<TouchTableThread>();
-	touchTableTracker_->getWindowSize(w, h);
-	touchTableTracker_->reset_Circle();
-	touchTableTracker_->startThread(true);
-
-
 	gui.setup();
 	//gui.setPosition(480, 20);
 	gui.add(minAreaRadius_.set("MinAreaRadius", 10.0, 0, 30.0));
@@ -27,6 +21,13 @@ void ofApp::setup(){
 	gui.add(isCalibMode_.set("Calibration", false));
 
 	cameraImg.allocate(w, h, OF_IMAGE_COLOR);
+
+	touchTableTracker_ = std::make_unique<TouchTableThread>();
+	touchTableTracker_->getWindowSize(w, h);
+	touchTableTracker_->reset_Circle();
+
+	loadParam();
+	touchTableTracker_->startThread(true);
 }
 
 //--------------------------------------------------------------
@@ -69,6 +70,7 @@ void ofApp::exit() {
 void ofApp::keyPressed(int key){
 	if (key == 'g') {
 		drawGui = !drawGui;
+		saveParam();
 	}
 }
 
@@ -126,4 +128,43 @@ void ofApp::gotMessage(ofMessage msg){
 //--------------------------------------------------------------
 void ofApp::dragEvent(ofDragInfo dragInfo){ 
 
+}
+
+void ofApp::loadParam() {
+	nlohmann::json j;
+	std::ifstream ifs("data.json");
+	if (!ifs)
+		return;
+	ifs >> j;
+	ifs.close();
+
+	std::vector<ofVec2f> circles;
+	for (size_t i = 0; i < 4; i++) {
+		circles.push_back(ofVec2f(j["rect"][i * 2], j["rect"][i * 2 + 1]));
+	}
+	touchTableTracker_->setPerspective(circles);
+
+	threshold_ = j["tracker"]["threshold"];
+	minAreaRadius_ = j["tracker"]["minAreaRadius"];
+	maxAreaRadius_ = j["tracker"]["maxArearaduis"];
+	gamma_ = j["tracker"]["gamma"];
+}
+
+void ofApp::saveParam() {
+	nlohmann::json j;
+	std::array<float, 8> circles;
+	for (size_t i = 0; i < 4; i++) {
+		ofVec2f p = touchTableTracker_->pts_src[i];
+		circles[i * 2] = p.x;
+		circles[i * 2 + 1] = p.y;
+	}
+	j["rect"] = circles;
+	j["tracker"]["threshold"] = (float)this->threshold_;
+	j["tracker"]["minAreaRadius"] = (float)this->minAreaRadius_;
+	j["tracker"]["maxArearaduis"] = (float)this->maxAreaRadius_;
+	j["tracker"]["gamma"] = (float)this->gamma_;
+
+	std::ofstream ofs("data.json");
+	ofs << j.dump(4) << std::endl;
+	ofs.close();
 }

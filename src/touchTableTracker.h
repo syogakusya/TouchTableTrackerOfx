@@ -81,6 +81,7 @@ public:
 	void moveClosestPoint(int x, int y);
 	void pickClosestPoint(int x, int y);
 	void setCalib();
+	void setPerspective(std::vector<ofVec2f> circles);
 
 private:
 	bool isCalibMode;
@@ -88,8 +89,6 @@ private:
 	ofVec2f pickOffset;
 	cv::Mat perspectiveMat;
 	cv::Mat resultImg;
-
-	void setPerspective(std::vector<ofVec2f> circles);
 	void drawSrcCircle();
 
 //--TUIO-----------------------------------------------------------------------
