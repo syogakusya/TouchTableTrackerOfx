@@ -7,6 +7,10 @@ void ofApp::getWindowSize(int w_, int h_) {
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	ofSetLogLevel(OF_LOG_VERBOSE);
+	cam.setVerbose(true);
+	cam.listDevices();
+
 	ofSetVerticalSync(true);
 	ofBackground(0);
 
