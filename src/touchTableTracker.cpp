@@ -158,8 +158,8 @@ void TouchTableThread::setParam(
 	contourFinder_->setThreshold(threshold);
 	contourFinder_->setMinAreaRadius(minAreaRadius);
 	contourFinder_->setMaxAreaRadius(maxAreaRadius);
-	tracker_->setPersistence(15);
-	tracker_->setMaximumDistance(32);
+	tracker_->setPersistence(30);
+	tracker_->setMaximumDistance(60);
 	unlock();
 }
 

@@ -16,8 +16,8 @@ public:
 	TouchTableTracker():
 		startedDying(0),
 		startedNasent(0),
-		dyingTime(1),
-		nasentTime(0.5){}
+		dyingTime(0.5),
+		nasentTime(0.2){}
 
 	void setup(const cv::Rect& track);
 	void update(const cv::Rect& track);
